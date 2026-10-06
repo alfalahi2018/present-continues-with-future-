@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Week Planner – Present Continuous for Future Arrangements (Grade 7)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#22304A; --paper:#FFF8E6; --line:#EBDDB8; --coral:#FF6B57; --coral-d:#C9432F;
+  --teal:#12A594; --teal-d:#0B7A6D; --sun:#FFD45E; --good:#1FA971; --bad:#E5484D;
+  --who:#2F6FED; --be:#E8710A; --doing:#7B4DE0; --when:#0E9F6E;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:'Nunito','Trebuchet MS','Segoe UI',system-ui,sans-serif;font-weight:600;color:var(--ink);
+  background:var(--paper);
+  background-image:repeating-linear-gradient(to bottom,transparent 0 33px,var(--line) 33px 34px);
+  min-height:100vh;-webkit-tap-highlight-color:transparent;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+#app{max-width:980px;margin:0 auto;padding:12px 14px 70px}
+h1,h2,h3{margin:0;line-height:1.1}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--doing);outline-offset:2px}
+
+/* HUD */
+.hud{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--ink);color:#fff;border-radius:var(--radius);padding:8px 14px;margin-bottom:12px}
+.hearts{font-size:22px;letter-spacing:2px;min-width:120px}
+.passport{display:flex;gap:6px;margin:0 auto}
+.stamp-slot{width:34px;height:34px;border-radius:50%;border:2px dashed rgba(255,255,255,.4);display:grid;place-items:center;font-size:18px;filter:grayscale(1) opacity(.35)}
+.stamp-slot.got{border:2px solid var(--sun);filter:none;background:rgba(255,212,94,.2);transform:rotate(-8deg)}
+.score{font-weight:800;font-size:20px}
+.mute{background:transparent;border:0;color:#fff;font-size:20px;padding:2px 6px}
+
+/* start: diary cover */
+.cover{max-width:700px;margin:14px auto;background:#fff;border-radius:22px;border:3px solid var(--ink);padding:44px 20px 20px;position:relative;text-align:center;box-shadow:0 8px 0 rgba(34,48,74,.2)}
+.rings{position:absolute;top:-14px;left:0;right:0;display:flex;justify-content:space-evenly}
+.rings i{width:16px;height:34px;border-radius:10px;background:#B8C2D6;border:3px solid var(--ink)}
+.cover h1{font-family:'Caveat Brush','Comic Sans MS',cursive;font-size:clamp(44px,10vw,72px);font-weight:400;color:var(--coral);transform:rotate(-2deg)}
+.cover .sub{font-size:19px;margin:6px 0 12px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:8px 0 14px}
+.day{border:2px solid var(--ink);border-radius:10px;padding:4px 0;font-size:12px;font-weight:800;background:var(--paper)}
+.day span{display:block;font-size:24px;line-height:1.2}
+.day:nth-child(odd){transform:rotate(-2deg)} .day:nth-child(even){transform:rotate(2deg)}
+.cover input{font:inherit;font-weight:800;width:100%;max-width:340px;text-align:center;padding:10px 14px;border-radius:14px;border:3px solid var(--ink);background:#fff;color:var(--ink)}
+.rules{list-style:none;padding:0;margin:14px auto 16px;max-width:430px;text-align:left;font-size:17px}
+.rules li{padding:2px 0}
+.btn{background:var(--teal);color:#fff;border:0;border-radius:14px;padding:11px 26px;font-weight:800;font-size:20px;box-shadow:0 5px 0 var(--teal-d);transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--teal-d)}
+.btn[disabled]{background:#9AA3B8;box-shadow:0 5px 0 #7A839A;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:0 5px 0 #C9D2E3;border:2px solid var(--ink)}
+.btn.small{font-size:16px;padding:6px 14px;box-shadow:0 3px 0 var(--teal-d)}
+.credit{font-weight:800;font-size:17px;margin-top:14px}
+
+/* grammar rule block */
+.rule{background:#FFFDF5;border:2px dashed var(--ink);border-radius:14px;padding:12px 10px;margin:0 0 14px;text-align:center}
+.formula{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center}
+.formula .plus{font-weight:800;font-size:20px}
+.r,.w{border-radius:10px;padding:3px 10px;color:#fff;font-weight:800;line-height:1.2}
+.r{font-size:15px}
+.who{background:var(--who)} .be{background:var(--be)} .doing{background:var(--doing)} .when{background:var(--when)}
+.ex{font-size:19px;line-height:2;margin:8px 0 0}
+.ex .w{padding:1px 8px;margin:0 1px}
+.note{font-size:16px;margin:8px 0 0}
+.note .ar{display:block;margin-top:2px;font-size:17px}
+
+/* level header */
+.lvl-head{background:#fff;border:3px solid var(--ink);border-radius:var(--radius);padding:12px 16px;margin-bottom:12px;box-shadow:0 4px 0 rgba(34,48,74,.2)}
+.lvl-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.lvl-head h2{font-size:23px;font-weight:800}
+.lvl-head p{margin:2px 0 8px;font-size:17px}
+.timer{display:flex;align-items:center;gap:10px}
+.track{flex:1;height:14px;background:#E8E3D2;border-radius:99px;overflow:hidden}
+.bar{height:100%;width:100%;background:var(--teal);border-radius:99px;transition:width 1s linear,background .3s}
+.timer.hurry .bar{background:var(--bad)}
+.timer.hurry #ttxt{color:var(--bad);animation:pulse .6s infinite alternate}
+#ttxt{font-weight:800;min-width:48px;text-align:right}
+@keyframes pulse{to{transform:scale(1.18)}}
+.prog{font-weight:800;font-size:18px;margin:4px 2px 8px}
+
+/* chips */
+.chip{
+  display:inline-block;background:var(--coral);color:#fff;font-weight:800;font-size:19px;
+  padding:7px 15px;border-radius:12px;box-shadow:0 4px 0 var(--coral-d);cursor:grab;
+  touch-action:none;user-select:none;-webkit-user-select:none;text-align:center;line-height:1.2;
+}
+.chip.selected{outline:4px solid var(--ink);outline-offset:2px}
+.chip.dragging{opacity:.25}
+.chip.locked{background:var(--good);box-shadow:0 3px 0 #13744B;cursor:default}
+.chip.locked.role-who{background:var(--who);box-shadow:0 3px 0 #1D4CB0}
+.chip.locked.role-be{background:var(--be);box-shadow:0 3px 0 #A85205}
+.chip.locked.role-doing{background:var(--doing);box-shadow:0 3px 0 #5530B0}
+.chip.locked.role-when{background:var(--when);box-shadow:0 3px 0 #0A7350}
+.chip.bad{background:var(--bad);box-shadow:0 4px 0 #A82A2E}
+.chip.ghost{position:fixed;z-index:200;pointer-events:none;transform:rotate(-4deg) scale(1.08);box-shadow:0 14px 20px rgba(0,0,0,.3)}
+.tray{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;background:rgba(255,255,255,.95);border-radius:var(--radius);border:3px dashed #B9B08F;margin-top:12px;min-height:64px}
+.tray.sticky{position:sticky;bottom:6px;z-index:20;box-shadow:0 -4px 14px rgba(34,48,74,.22)}
+.tray.hover{border-color:var(--teal)}
+.tray:empty{display:none}
+
+/* level 1 */
+.scene1{background:#fff;border:3px solid var(--ink);border-radius:var(--radius);padding:10px;text-align:center;margin-bottom:10px}
+.scene1 .big{font-size:64px;line-height:1.1;filter:drop-shadow(0 5px 0 rgba(0,0,0,.14))}
+.slots{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:14px 8px;background:#fff;border:3px solid var(--ink);border-radius:var(--radius)}
+.slot{min-width:62px;min-height:48px;padding:0 4px;border:2.5px dashed #B9B08F;background:var(--paper);border-radius:12px;display:grid;place-items:center}
+.slot.hover{border-color:var(--teal);background:#E2F7F3}
+.slot:not(:empty){border:2.5px solid transparent}
+.actions{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.hint{text-align:center;margin-top:10px;font-size:15px}
+.legend{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.legend .r{font-size:14px}
+
+/* level 2 */
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px}
+.qcard{display:flex;align-items:center;gap:12px;background:#fff;border:3px solid var(--ink);border-radius:var(--radius);padding:10px}
+.qs{flex:none;width:68px;height:68px;border-radius:14px;display:grid;place-items:center;font-size:40px;background:linear-gradient(160deg,var(--a),var(--b))}
+.qs span{filter:drop-shadow(0 3px 0 rgba(0,0,0,.18))}
+.qt{font-size:18px;line-height:1.9}
+.qt small{font-size:14px;opacity:.75}
+.gap{display:inline-grid;place-items:center;min-width:120px;min-height:38px;vertical-align:middle;border:3px dashed var(--teal);border-radius:10px;background:#E8F8F5;margin:0 2px;padding:0 3px}
+.gap.hover{background:#C6EFE8}
+.gap .chip{font-size:inherit;padding:2px 10px}
+
+/* level 3 */
+.who-title{font-family:'Caveat Brush','Comic Sans MS',cursive;font-size:30px;margin:12px 0 6px;color:var(--coral)}
+.nrow{background:#fff;border:3px solid var(--ink);border-radius:var(--radius);padding:8px 10px;margin-bottom:8px}
+.ntop{display:flex;align-items:center;gap:10px;font-size:18px}
+.ntop .em{font-size:34px}
+.ntop .txt{flex:1}
+.ntop .mk{font-size:28px}
+.drop{min-height:46px;margin-top:6px;border:2.5px dashed var(--teal);border-radius:12px;background:#E8F8F5;display:grid;place-items:center}
+.drop.hover{background:#C6EFE8}
+.drop:empty::before{content:"drop the sentence here";font-size:14px;opacity:.55}
+.drop .chip{display:block;width:100%;font-size:17px}
+
+/* level 4 */
+.clue-area{background:#fff;border:3px solid var(--ink);border-radius:var(--radius);padding:14px;text-align:center;margin-bottom:12px}
+.clue-area .big{font-size:56px;line-height:1.1}
+.chip.sent{font-size:clamp(20px,4.6vw,28px);padding:14px 20px;max-width:100%}
+.judge{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.jbin{border-radius:var(--radius);padding:18px 8px;text-align:center;font-size:clamp(22px,5vw,30px);font-weight:800;color:#fff;transition:transform .15s;min-height:116px;display:grid;place-items:center;align-content:center}
+.jbin small{font-size:15px;font-weight:700;display:block}
+.jbin.ok{background:var(--good);box-shadow:0 6px 0 #13744B}
+.jbin.no{background:var(--bad);box-shadow:0 6px 0 #A82A2E}
+.jbin.hover{transform:scale(1.05);outline:5px solid var(--sun)}
+
+.shake{animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.flash{animation:flash .6s}
+@keyframes flash{30%{box-shadow:0 0 0 6px var(--good)}}
+
+/* toast / modal / confetti */
+.toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:300;padding:10px 20px;border-radius:99px;font-weight:800;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.25);animation:toast 2.2s forwards;max-width:92vw;text-align:center}
+.toast.good{background:var(--good)} .toast.bad{background:var(--bad)}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,-20px)}10%,82%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+.overlay{position:fixed;inset:0;background:rgba(34,48,74,.72);display:grid;place-items:center;z-index:400;padding:16px}
+.modal{background:#fff;border-radius:24px;padding:22px;max-width:460px;width:100%;text-align:center;box-shadow:0 12px 0 rgba(0,0,0,.2);max-height:92vh;overflow:auto}
+.modal h2{font-size:28px;font-weight:800;margin-bottom:8px}
+.modal p{font-size:19px;margin:6px 0 16px}
+.big-stamp{width:120px;height:120px;border-radius:50%;margin:0 auto 12px;border:5px double var(--coral);color:var(--coral);display:grid;place-items:center;font-size:56px;transform:rotate(-10deg);animation:stamp .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes stamp{from{transform:rotate(-10deg) scale(2.6);opacity:0}}
+.conf{position:fixed;top:-16px;width:10px;height:14px;z-index:350;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(108vh) rotate(720deg)}}
+
+/* certificate */
+.cert{max-width:680px;margin:14px auto;background:#fff;border-radius:24px;padding:30px 22px;text-align:center;border:8px double var(--coral);box-shadow:0 10px 0 rgba(34,48,74,.18)}
+.cert h2{font-family:'Caveat Brush','Comic Sans MS',cursive;font-weight:400;font-size:clamp(34px,7vw,50px);color:var(--coral)}
+.cert .name{font-size:clamp(30px,7vw,46px);font-weight:800;color:var(--who);margin:10px 0}
+.cert .stars{font-size:44px;margin:8px 0}
+.cert .stats{font-size:19px}
+
+footer.site{position:fixed;left:0;right:0;bottom:0;text-align:center;font-weight:800;font-size:14px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:rgba(34,48,74,.95);color:#fff;z-index:10}
+
+@media (max-width:560px){
+  .qgrid{grid-template-columns:1fr}
+  .qs{width:58px;height:58px;font-size:34px}
+  .qt{font-size:16.5px}
+  .gap{min-width:100px}
+  .chip{font-size:17px}
+  .tray.sticky .chip{font-size:15px;padding:6px 10px}
+  .drop .chip{font-size:15px}
+  .ntop{font-size:16px}
+  .week .day{font-size:11px}.day span{font-size:20px}
+  .slot{min-width:54px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  body *{visibility:hidden}
+  .cert,.cert *{visibility:visible}
+  .cert{position:absolute;left:0;top:0;width:100%;box-shadow:none}
+  footer.site{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="hud" id="hud" hidden>
+    <div class="hearts" id="hearts" aria-label="Lives"></div>
+    <div class="passport" id="passport" aria-label="Stickers"></div>
+    <div class="score" id="score">⭐ 0</div>
+    <button class="mute" id="mute" aria-label="Sound on or off">🔊</button>
+  </div>
+  <main id="stage"></main>
+</div>
+<footer class="site">Created by T.Badria Alfalahi · Grade 7 English · Present continuous for future arrangements</footer>
+
+<script>
+/* ============ DATA ============ */
+const RULE_HTML=`
+  <div class="rule">
+    <div class="formula">
+      <span class="r who">Who</span><span class="plus">+</span>
+      <span class="r be">am / is / are<br>(not)</span><span class="plus">+</span>
+      <span class="r doing">verb + ing</span><span class="plus">+</span>
+      <span class="r when">when</span>
+    </div>
+    <p class="ex"><span class="w who">We</span> <span class="w be">are</span> <span class="w doing">going to the cinema</span> <span class="w when">tonight</span>.</p>
+    <p class="ex"><span class="w who">They</span> <span class="w be">aren't</span> <span class="w doing">flying to Cairo</span> <span class="w when">tomorrow</span>.</p>
+    <p class="note">We use the <b>Present continuous</b> for future plans we have <b>arranged</b>.
+      <span class="ar" dir="rtl">نستخدمه للخطط المستقبلية التي تم ترتيبها مسبقاً</span></p>
+  </div>`;
+const ROLES={who:'Who',be:'am / is / are',doing:'doing what',when:'when'};
+
+const BUILD=[
+ {e:'🏡',w:[["I'm",'be'],['staying','doing'],['with','doing'],['my','doing'],['grandparents','doing'],['next','when'],['summer.','when']]},
+ {e:'🎬',w:[["We're",'be'],['going','doing'],['to','doing'],['the','doing'],['cinema','doing'],['tonight.','when']]},
+ {e:'👫',w:[["He's",'be'],['seeing','doing'],['his','doing'],['friends','doing'],['on','when'],['Saturday.','when']]},
+ {e:'✈️',w:[['They','who'],["aren't",'be'],['flying','doing'],['to','doing'],['Cairo','doing'],['tomorrow.','when']]},
+ {e:'🏖️',w:[['My','who'],['parents','who'],["aren't",'be'],['working','doing'],['tomorrow.','when']]},
+ {e:'🧳',w:[['Tasneem','who'],['is','be'],['visiting','doing'],['Bahrain','doing'],['next','when'],['month.','when']]}
+];
+const FILL=[
+ {e:'🦁',c:['#FFE0A3','#E08E1B'],s:'My friends and I ___ (not/go) to the safari park tomorrow.',a:"aren't going"},
+ {e:'🏡',c:['#B5EAA2','#3FA34D'],s:'I ___ (stay) with my grandparents next summer.',a:"'m staying"},
+ {e:'🎳',c:['#FFB199','#FF6B57'],s:'Muhanad ___ (not/go) bowling with his friends this evening.',a:"isn't going"},
+ {e:'🎬',c:['#C9B8FF','#5B47E0'],s:'You and your friends ___ (watch) a film this Saturday.',a:'are watching'},
+ {e:'🧳',c:['#9BE7FF','#2E86DE'],s:'Tasneem ___ (visit) Bahrain with her family next month.',a:'is visiting'},
+ {e:'🏖️',c:['#FFE9A8','#F5B700'],s:'My parents ___ (not/work) tomorrow.',a:"aren't working"},
+ {e:'🏑',c:['#FFD1F0','#FF8AD8'],s:'Sara ___ (play) hockey with her friends on Friday.',a:'is playing'},
+ {e:'📺',c:['#E0F4FF','#7CC4F2'],s:'I ___ (not/watch) cartoons this evening.',a:"'m not watching"}
+];
+const FILL_DECOYS=['is going','am working'];
+const PLANS=[
+ {who:'Halima',e:'🏠',note:'help dad – home',ok:true,s:'Halima is helping her dad at home.'},
+ {who:'Halima',e:'🍕',note:'have pizza – lunch',ok:false,s:"Halima isn't having pizza for lunch."},
+ {who:'Halima',e:'👴',note:'visit grandad',ok:true,s:'Halima is visiting her grandad.'},
+ {who:'Anas and Zaid',e:'🔭',note:'go to planetarium',ok:true,s:'Anas and Zaid are going to the planetarium.'},
+ {who:'Anas and Zaid',e:'☕',note:'eat lunch – café',ok:true,s:'Anas and Zaid are eating lunch at a café.'},
+ {who:'Anas and Zaid',e:'🎬',note:'watch film',ok:false,s:"Anas and Zaid aren't watching a film."}
+];
+const JUDGE=[
+ {e:'🎬',s:"We're going to the cinema tonight.",ok:true},
+ {e:'📺',s:'She watching a film this evening.',ok:false,fix:"She's watching a film this evening."},
+ {e:'🏛️',s:'They is visiting the museum tomorrow.',ok:false,fix:"They're visiting the museum tomorrow."},
+ {e:'👫',s:"I'm seeing my friends on Saturday.",ok:true},
+ {e:'🏖️',s:"My parents aren't work tomorrow.",ok:false,fix:"My parents aren't working tomorrow."},
+ {e:'⚽',s:'Are you meeting your friends this evening?',ok:true},
+ {e:'🎪',s:"I'm go to the circus on Friday.",ok:false,fix:"I'm going to the circus on Friday."},
+ {e:'✈️',s:"Tasneem isn't flying to Cairo tomorrow.",ok:true}
+];
+const LEVELS=[
+ {name:'Build the sentence',emoji:'🧩',time:180,help:'Put the words in order. Colours show the grammar!',render:L1},
+ {name:'Complete the plans',emoji:'✏️',time:150,help:'Drag the correct Present continuous into each gap.',render:L2},
+ {name:'Who is doing what?',emoji:'🗓️',time:150,help:'✔ = planned, ✘ = not planned. Match each note to its sentence.',render:L3},
+ {name:'Correct or mistake?',emoji:'⚖️',time:100,help:'Is the sentence correct? Drag it to the right box.',render:L4}
+];
+const MAX_SCORE=6*20+8*15+6*20+8*15;
+
+/* ============ HELPERS ============ */
+const $=s=>document.querySelector(s);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const state={name:'',lives:5,score:0,level:0,stamps:[false,false,false,false],mute:false,scoreAtStart:0};
+let dropHandler=null,selected=null,dragCtx=null,tInt=null,tLeft=0,tTotal=1;
+
+/* ============ SOUND ============ */
+let ac;
+function beep(freq,dur,type='sine',vol=.15,delay=0){
+  if(state.mute) return;
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+delay;
+    o.type=type;o.frequency.value=freq;o.connect(g);g.connect(ac.destination);
+    g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    o.start(t);o.stop(t+dur);
+  }catch(e){}
+}
+const sfx={
+  ok(){beep(660,.15);beep(880,.2,'sine',.15,.1)},
+  no(){beep(200,.3,'sawtooth',.09)},
+  win(){[523,659,784,1047].forEach((f,i)=>beep(f,.28,'triangle',.15,i*.12))},
+  tick(){beep(900,.05,'square',.03)},
+  pop(){beep(500,.06,'sine',.1)}
+};
+
+/* ============ HUD / UI ============ */
+function renderHUD(){
+  $('#hearts').textContent='❤️'.repeat(Math.max(0,state.lives))+'🤍'.repeat(Math.max(0,5-state.lives));
+  $('#score').textContent='⭐ '+state.score;
+  $('#passport').innerHTML=LEVELS.map((l,i)=>`<div class="stamp-slot ${state.stamps[i]?'got':''}" title="${l.name}">${l.emoji}</div>`).join('');
+  $('#mute').textContent=state.mute?'🔇':'🔊';
+}
+$('#mute').onclick=()=>{state.mute=!state.mute;renderHUD()};
+function toast(msg,type){
+  const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2200);
+}
+function confetti(){
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const cols=['#FFD45E','#FF6B57','#12A594','#2F6FED','#7B4DE0','#E8710A'];
+  for(let i=0;i<70;i++){
+    const c=document.createElement('div');c.className='conf';
+    c.style.left=Math.random()*100+'vw';c.style.background=pick(cols);
+    c.style.animationDuration=(2+Math.random()*2)+'s';c.style.animationDelay=Math.random()*.6+'s';
+    document.body.appendChild(c);setTimeout(()=>c.remove(),4800);
+  }
+}
+function showModal(html,btnText,cb){
+  const o=document.createElement('div');o.className='overlay';
+  o.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}<button class="btn" id="mbtn">${btnText}</button></div>`;
+  document.body.appendChild(o);
+  const b=o.querySelector('#mbtn');b.focus();
+  b.onclick=()=>{o.remove();cb&&cb()};
+}
+
+/* ============ TIMER ============ */
+function startTimer(sec){
+  stopTimer();tTotal=tLeft=sec;updTimer();
+  tInt=setInterval(()=>{
+    tLeft--;updTimer();
+    if(tLeft>0&&tLeft<=10) sfx.tick();
+    if(tLeft<=0){stopTimer();toast("Time's up! Keep going – no bonus now.",'bad')}
+  },1000);
+}
+function stopTimer(){clearInterval(tInt);tInt=null}
+function updTimer(){
+  const bar=$('.bar'),txt=$('#ttxt'),box=$('.timer');
+  if(!bar) return;
+  const left=Math.max(0,tLeft);
+  bar.style.width=(left/tTotal*100)+'%';
+  txt.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
+  box.classList.toggle('hurry',left/tTotal<=.25&&left>0);
+}
+
+/* ============ DRAG & DROP ENGINE (mouse + touch + tap) ============ */
+function clearSel(){if(selected){selected.classList.remove('selected');selected=null}}
+function clearHover(){document.querySelectorAll('.hover').forEach(e=>e.classList.remove('hover'))}
+function zoneAt(x,y){const el=document.elementFromPoint(x,y);return el&&el.closest?el.closest('.zone'):null}
+document.addEventListener('pointerdown',e=>{
+  const chip=e.target.closest&&e.target.closest('.chip:not(.locked):not(.ghost)');
+  if(!chip||!dropHandler) return;
+  e.preventDefault();
+  dragCtx={chip,sx:e.clientX,sy:e.clientY,moved:false};
+});
+document.addEventListener('pointermove',e=>{
+  const d=dragCtx;if(!d) return;
+  if(!d.moved&&Math.hypot(e.clientX-d.sx,e.clientY-d.sy)>6){
+    d.moved=true;const r=d.chip.getBoundingClientRect();
+    d.ghost=d.chip.cloneNode(true);d.ghost.classList.add('ghost');d.ghost.classList.remove('selected');
+    d.ghost.style.width=r.width+'px';document.body.appendChild(d.ghost);
+    d.ox=d.sx-r.left;d.oy=d.sy-r.top;d.chip.classList.add('dragging');clearSel();
+  }
+  if(d.moved){
+    d.ghost.style.left=(e.clientX-d.ox)+'px';d.ghost.style.top=(e.clientY-d.oy)+'px';
+    clearHover();const z=zoneAt(e.clientX,e.clientY);if(z) z.classList.add('hover');
+  }
+});
+function endDrag(e,cancel){
+  const d=dragCtx;if(!d) return;dragCtx=null;
+  if(d.moved){
+    d.ghost.remove();d.chip.classList.remove('dragging');clearHover();
+    if(!cancel){const z=zoneAt(e.clientX,e.clientY);if(z&&dropHandler) dropHandler(d.chip,z)}
+  }else if(!cancel){
+    if(selected===d.chip) clearSel();
+    else{clearSel();selected=d.chip;d.chip.classList.add('selected')}
+  }
+}
+document.addEventListener('pointerup',e=>endDrag(e,false));
+document.addEventListener('pointercancel',e=>endDrag(e,true));
+document.addEventListener('click',e=>{
+  const z=e.target.closest&&e.target.closest('.zone');
+  if(z&&selected&&!e.target.closest('.chip')&&dropHandler){const c=selected;clearSel();dropHandler(c,z)}
+});
+
+/* ============ GAME FLOW ============ */
+function loseLife(){
+  state.lives--;renderHUD();
+  if(state.lives<=0){
+    stopTimer();dropHandler=null;
+    showModal('<div class="big-stamp">💔</div><h2>Out of lives!</h2><p>Do not worry. Try this level again.</p>','Try again',()=>{
+      state.lives=3;state.score=state.scoreAtStart;renderHUD();startLevel(state.level);
+    });
+  }
+}
+function wrong(chip,zone,msg){
+  sfx.no();
+  [chip,zone].forEach(el=>{if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')});
+  toast(msg||pick(['Not quite – try again!','Oops! Check am / is / are.','Almost! Look again.']),'bad');
+  loseLife();
+}
+function right(points,msg){
+  state.score+=points;renderHUD();sfx.ok();
+  toast(msg||pick(['Great job! 🎉','Perfect! ⭐','Well done! 👏','Yes! Correct! ✅']),'good');
+}
+function startGame(){
+  state.name=($('#pname')?.value||'').trim();
+  Object.assign(state,{lives:5,score:0,level:0,stamps:[false,false,false,false]});
+  $('#hud').hidden=false;renderHUD();startLevel(0);
+}
+function startLevel(i){
+  state.level=i;state.scoreAtStart=state.score;dropHandler=null;clearSel();
+  const L=LEVELS[i];
+  $('#stage').innerHTML=`
+    <div class="lvl-head">
+      <div class="lvl-top"><h2>${L.emoji} Level ${i+1} of ${LEVELS.length}: ${L.name}</h2><button class="btn small" id="ruleBtn">💡 Rule</button></div>
+      <p>${L.help} <small>(Or tap a word, then tap a box.)</small></p>
+      <div class="timer"><div class="track"><div class="bar"></div></div><span id="ttxt"></span></div>
+    </div>
+    <div id="play"></div>`;
+  $('#ruleBtn').onclick=()=>showModal('<h2>Remember! 💡</h2>'+RULE_HTML,'Got it');
+  startTimer(L.time);
+  L.render($('#play'));
+  window.scrollTo({top:0});
+}
+function levelComplete(){
+  stopTimer();dropHandler=null;clearSel();
+  const bonus=Math.max(0,tLeft);
+  state.score+=bonus;state.stamps[state.level]=true;state.lives=Math.min(5,state.lives+1);
+  renderHUD();sfx.win();confetti();
+  const L=LEVELS[state.level],last=state.level===LEVELS.length-1;
+  showModal(`<div class="big-stamp">${L.emoji}</div><h2>Level ${state.level+1} complete!</h2>
+    <p>You earned a sticker for your planner.<br>⏱️ Time bonus: <b>+${bonus}</b></p>`,
+    last?'See my certificate 🏅':'Next level ▶',
+    ()=>last?finish():startLevel(state.level+1));
+}
+function finish(){
+  const stars=state.score>=MAX_SCORE?3:state.score>=MAX_SCORE*.72?2:1;
+  $('#stage').innerHTML=`
+    <div class="cert">
+      <div style="font-size:46px">📅🎬✈️🔭</div>
+      <h2>Planner Champion</h2>
+      <p>This certificate is awarded to</p>
+      <div class="name"></div>
+      <p>for mastering the Present continuous for future arrangements!</p>
+      <div class="stars">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
+      <div class="stats">Final score: <b>${state.score}</b> · Lives left: <b>${state.lives}</b></div>
+      <p class="credit">Created by T.Badria Alfalahi</p>
+    </div>
+    <div class="actions">
+      <button class="btn" id="again">Play again 🔁</button>
+      <button class="btn ghost" id="print">Print certificate 🖨️</button>
+    </div>`;
+  document.querySelector('.cert .name').textContent=state.name||'Super Student';
+  $('#again').onclick=showStart;
+  $('#print').onclick=()=>window.print();
+  confetti();
+}
+
+/* ============ LEVEL 1: build the sentence (colour-coded grammar) ============ */
+function L1(play){
+  const list=shuffle(BUILD);let i=0;
+  function one(){
+    const it=list[i],words=it.w.map(x=>x[0]);
+    play.innerHTML=`<div class="prog">Sentence ${i+1} of ${list.length}</div>
+      <div class="scene1"><div class="big">${it.e}</div></div>
+      <div class="slots">${words.map(()=>'<div class="zone slot"></div>').join('')}</div>
+      <div class="legend" id="legend"></div>
+      <div class="tray zone" id="tray">${shuffle(words).map(w=>`<div class="chip">${w}</div>`).join('')}</div>
+      <div class="actions"><button class="btn" id="chk" disabled>Check ✔</button><button class="btn ghost" id="rst">Start again</button></div>
+      <div class="hint">Tip: Who? + am/is/are + doing what? + when?</div>`;
+    const slots=[...play.querySelectorAll('.slot')],tray=$('#tray'),chk=$('#chk');
+    const sync=()=>{chk.disabled=!slots.every(s=>s.firstElementChild)};
+    dropHandler=(chip,zone)=>{
+      if(zone.classList.contains('slot')){
+        const cur=zone.firstElementChild;
+        if(cur&&cur!==chip){const from=chip.parentElement;(from.classList.contains('slot')?from:tray).appendChild(cur)}
+        zone.appendChild(chip);
+      }else if(zone.id==='tray'){zone.appendChild(chip)}
+      else return;
+      play.querySelectorAll('.chip.bad').forEach(c=>c.classList.remove('bad'));
+      sfx.pop();sync();
+    };
+    $('#rst').onclick=()=>{slots.forEach(s=>{if(s.firstElementChild)tray.appendChild(s.firstElementChild)});sync()};
+    chk.onclick=()=>{
+      const got=slots.map(s=>s.firstElementChild.textContent);
+      if(got.join(' ')===words.join(' ')){
+        slots.forEach((s,k)=>s.firstElementChild.classList.add('locked','role-'+it.w[k][1]));
+        $('#legend').innerHTML=Object.keys(ROLES).map(r=>`<span class="r ${r}">${ROLES[r]}</span>`).join('');
+        chk.disabled=true;$('#rst').disabled=true;dropHandler=null;
+        right(20);i++;
+        setTimeout(i>=list.length?levelComplete:one,2200);
+      }else{
+        slots.forEach((s,k)=>{if(got[k]!==words[k]) s.firstElementChild.classList.add('bad')});
+        sfx.no();toast('The red words are in the wrong place.','bad');loseLife();
+      }
+    };
+  }
+  one();
+}
+
+/* ============ LEVEL 2: complete the plans ============ */
+function L2(play){
+  let left=FILL.length;
+  play.innerHTML=`<div class="qgrid">${FILL.map(g=>{
+      const m=g.s.match(/^(.*)___ \((.*?)\)(.*)$/);
+      return `<div class="qcard"><div class="qs" style="--a:${g.c[0]};--b:${g.c[1]}"><span>${g.e}</span></div>
+        <div class="qt">${m[1]}<span class="zone gap" data-answer="${g.a}"></span> <small>(${m[2]})</small>${m[3]}</div></div>`;
+    }).join('')}</div>
+    <div class="tray sticky">${shuffle(FILL.map(g=>g.a).concat(FILL_DECOYS)).map(w=>`<div class="chip">${w}</div>`).join('')}</div>`;
+  dropHandler=(chip,zone)=>{
+    if(!zone.classList.contains('gap')||zone.firstElementChild) return;
+    if(chip.textContent===zone.dataset.answer){
+      zone.appendChild(chip);chip.classList.add('locked');
+      zone.closest('.qcard').classList.add('flash');
+      right(15);left--;
+      if(left===0) setTimeout(levelComplete,700);
+    }else wrong(chip,zone,'Check the subject: is / are / am? Positive or negative?');
+  };
+}
+
+/* ============ LEVEL 3: notes -> sentences ============ */
+function L3(play){
+  let left=PLANS.length;
+  const names=[...new Set(PLANS.map(p=>p.who))];
+  play.innerHTML=names.map(n=>`<div class="who-title">${n}'s plans for next Saturday</div>`+
+    PLANS.map((p,k)=>({p,k})).filter(o=>o.p.who===n).map(o=>`
+      <div class="nrow"><div class="ntop"><span class="em">${o.p.e}</span><span class="txt">${o.p.note}</span><span class="mk">${o.p.ok?'✅':'❌'}</span></div>
+      <div class="zone drop" data-id="${o.k}"></div></div>`).join('')).join('')+
+    `<div class="tray sticky">${shuffle(PLANS.map((p,k)=>({p,k}))).map(o=>`<div class="chip" data-id="${o.k}">${o.p.s}</div>`).join('')}</div>`;
+  dropHandler=(chip,zone)=>{
+    if(!zone.classList.contains('drop')||zone.firstElementChild) return;
+    if(chip.dataset.id===zone.dataset.id){
+      zone.appendChild(chip);chip.classList.add('locked');
+      right(20);left--;
+      if(left===0) setTimeout(levelComplete,700);
+    }else wrong(chip,zone,'Look at the name, the picture and the ✅ / ❌.');
+  };
+}
+
+/* ============ LEVEL 4: correct or mistake ============ */
+function L4(play){
+  const list=shuffle(JUDGE);let i=0;
+  function one(){
+    const it=list[i];
+    play.innerHTML=`<div class="clue-area"><div class="prog">Sentence ${i+1} of ${list.length}</div>
+        <div class="big">${it.e}</div>
+        <div class="chip sent" data-ok="${it.ok}">${it.s}</div></div>
+      <div class="judge">
+        <div class="jbin ok zone" data-ok="true">✅ Correct<small>no mistake</small></div>
+        <div class="jbin no zone" data-ok="false">❌ Mistake<small>wrong grammar</small></div>
+      </div>`;
+    dropHandler=(chip,zone)=>{
+      if(!zone.classList.contains('jbin')) return;
+      if(zone.dataset.ok===chip.dataset.ok){
+        dropHandler=null;chip.classList.add('locked');
+        right(15,it.ok?'Yes! This sentence is correct ✅':'Right! Better: '+it.fix);
+        i++;setTimeout(i>=list.length?levelComplete:one,it.ok?900:2000);
+      }else wrong(chip,zone,it.ok?'This sentence is correct!':'Check am / is / are and the verb + ing.');
+    };
+  }
+  one();
+}
+
+/* ============ START SCREEN ============ */
+function showStart(){
+  stopTimer();dropHandler=null;$('#hud').hidden=true;
+  const days=[['Sun','🎳'],['Mon','🔭'],['Tue','🏖️'],['Wed','🎬'],['Thu','🧳'],['Fri','🏑'],['Sat','🦁']];
+  $('#stage').innerHTML=`
+    <div class="cover">
+      <div class="rings" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <h1>My Week Planner</h1>
+      <p class="sub">Present continuous for future arrangements · Grade 7</p>
+      <div class="week" aria-hidden="true">${days.map(d=>`<div class="day">${d[0]}<span>${d[1]}</span></div>`).join('')}</div>
+      ${RULE_HTML}
+      <input id="pname" type="text" maxlength="30" placeholder="Write your name" aria-label="Your name" autocomplete="off">
+      <ul class="rules">
+        <li>🧩 4 levels – earn a sticker in each one</li>
+        <li>❤️ You have 5 lives. A mistake costs 1 life.</li>
+        <li>⏱️ Finish fast to get a time bonus</li>
+        <li>👆 Drag the coral words, or tap and then tap again</li>
+      </ul>
+      <button class="btn" id="go">Start planning 📅</button>
+      <div class="credit">Created by T.Badria Alfalahi</div>
+    </div>`;
+  $('#go').onclick=startGame;
+  $('#pname').addEventListener('keydown',e=>{if(e.key==='Enter') startGame()});
+}
+showStart();
+</script>
+</body>
+</html>
